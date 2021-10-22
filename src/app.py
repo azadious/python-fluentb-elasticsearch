@@ -5,17 +5,14 @@ from fluent import event
 
 app = Flask(__name__)
 
-logger = sender.FluentSender('app', host='fluentd', port=24224)
+sender.setup('fluentd.test', host='fluentd', port=24224)
 
 @app.route("/")
 def hello_world():
-    logger.emit('follow', {'from': 'userA', 'to': 'userB'})
-    logger.close()
-
+    event.Event('follow', {'from': 'userA', 'to': 'userB'})
     return "<p>Hello, World!</p>"
 
 @app.route("/<name>")
 def hello(name):
-    logger.emit('follow', {'from': 'userA', 'to': 'userB'})
-    logger.close()
+    event.Event('follow', {'route': name})
     return f"Hello, {escape(name)}!"
